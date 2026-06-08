@@ -28,7 +28,7 @@ def main():
     # 📥 DATA
     # =========================
     print("\n📥 Cargando datos...")
-    df = load_data_pipeline(start_date="2024-01-01", use_chunks=True)
+    df = load_data_pipeline(start_date="2023-01-01", use_chunks=True)
 
     print(f"📊 Dataset cargado: {df.shape}")
 
@@ -101,9 +101,12 @@ def main():
 
     if USE_LOG_TARGET:
         pred_reg = np.expm1(pred_reg)
-        y_test_eval = np.expm1(y_test_reg)
+        y_test_eval = pd.Series(
+            np.expm1(y_test_reg),
+            index=y_test_reg.index
+        )
     else:
-        y_test_eval = y_test_reg.values
+        y_test_eval = y_test_reg
 
     # CLASIFICACIÓN
     pred_clf = clf_model.predict(X_test)
@@ -135,7 +138,7 @@ def main():
     # =========================
     results = X_test.copy()
 
-    results["Real"] = y_test_eval.values
+    results["Real"] = y_test_eval
     results["Predicho"] = pred_reg
 
     # =========================
