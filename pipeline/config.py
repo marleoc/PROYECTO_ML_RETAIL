@@ -18,7 +18,11 @@ FEATURES = [
     "TienePromocion"
 ]
 
+CHUNK_SIZE = 500_000
+USE_FLOAT32 = True
+GROUP_KEYS = ["ProductoID", "SedeID"]
+TARGET = "CantidadVendida"
 RISK_QUANTILE = 0.90
 RANDOM_STATE = 42
 RISK_THRESHOLD = 0.70 # umbral de riesgo para clasificación para quiebres
-USE_LOG_TARGET = False # cambiar a True si se quiere usar log-transform en el target
+USE_LOG_TARGET = True # cambiar a True si se quiere usar log-transform en el target
