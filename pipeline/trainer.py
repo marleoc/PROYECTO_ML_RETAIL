@@ -134,19 +134,19 @@ def train_boosting_model(X, y):
 # =====================================================
 def train_regression(X, y):
 
-    print("\n🧠 Detectando segmento de demanda...")
+    print("\n🚀 Training LightGBM Retail Model")
 
-    segment = get_demand_segment(y)
+    model = LGBMRegressor(
+        n_estimators=1000,
+        learning_rate=0.03,
+        num_leaves=64,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=42,
+        n_jobs=-1
+    )
 
-    print(f"📦 Segmento detectado: {segment}")
-
-    if segment == "LOW":
-        print("🚀 Usando modelo LOW (RandomForestClassifier)")
-        model = train_low_model(X, y)
-
-    else:
-        print("🚀 Usando modelo BOOSTING (Regresión)")
-        model = train_boosting_model(X, y)
+    model.fit(X, y)
 
     return model
 

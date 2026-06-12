@@ -18,7 +18,7 @@ FEATURES = [
     "TienePromocion"
 ]
 
-CHUNK_SIZE = 500_000
+CHUNK_SIZE = 2_000_000
 USE_FLOAT32 = True
 GROUP_KEYS = ["ProductoID", "SedeID"]
 TARGET = "CantidadVendida"

@@ -14,19 +14,21 @@ El proyecto usa las siguientes librerías principales:
 - sqlalchemy: conexión y consulta a bases de datos SQL Server.
 - pyodbc: acceso a SQL Server desde Python.
 - joblib: carga y guardado de modelos entrenados.
+- fastapi: API REST para inferencia en tiempo real.
+- uvicorn: servidor ASGI para ejecutar la API.
 
 ### Instalación rápida
 
 Ejecuta estos comandos desde la raíz del proyecto:
 
 ```bash
-pip install pandas numpy scikit-learn optuna lightgbm sqlalchemy pyodbc joblib
+pip install pandas numpy scikit-learn optuna lightgbm sqlalchemy pyodbc joblib fastapi uvicorn
 ```
 
 Si tu entorno usa conda:
 
 ```bash
-conda install pandas numpy scikit-learn optuna lightgbm sqlalchemy pyodbc joblib
+conda install pandas numpy scikit-learn optuna lightgbm sqlalchemy pyodbc joblib fastapi uvicorn
 ```
 
 > Nota: además debes tener instalado el driver ODBC de SQL Server (por ejemplo, ODBC Driver 18 for SQL Server) para que funcione la conexión en `pipeline/data_loader.py`.
@@ -88,8 +90,79 @@ python main.py
 
 Esto cargará los datos, generará features, entrenará los modelos, evaluará resultados y guardará los artefactos en la carpeta `models/`.
 
-## 4. Estructura principal
+## 4. Ejecutar la API FastAPI
+
+La API está en `api/main.py` y expone el endpoint `POST /predict` para inferencia en tiempo real.
+
+### Iniciar la API
+
+```bash
+python -m uvicorn api.main:app --reload
+```
+
+La API quedará disponible en:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Desde Swagger puedes probar directamente el endpoint `/predict`.
+
+### Probar el endpoint con curl
+
+```bash
+curl -X POST "http://127.0.0.1:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Fecha": "2026-06-15",
+    "ProductoID": 1,
+    "SedeID": 2,
+    "CantidadVendida": 100,
+    "PrecioPromedio": 0.90,
+    "DiaSemana": 2,
+    "Mes": 3,
+    "Semana": 15,
+    "EsFinSemana": 0,
+    "EsFinMes": 0,
+    "EsQuincena": 0,
+    "Venta_Ayer": 200.00,
+    "Venta_7_Dias": 232.00,
+    "Venta_30_Dias": 500.00,
+    "Promedio_7_Dias": 232.00,
+    "Promedio_30_Dias": 232.00,
+    "TienePromocion": 0,
+    "StockActual": 120
+  }'
+```
+
+### Ejemplo de input para pruebas
+
+```json
+{
+  "Fecha": "2026-06-15",
+  "ProductoID": 1,
+  "SedeID": 2,
+  "CantidadVendida": 100,
+  "PrecioPromedio": 0.90,
+  "DiaSemana": 2,
+  "Mes": 3,
+  "Semana": 15,
+  "EsFinSemana": 0,
+  "EsFinMes": 0,
+  "EsQuincena": 0,
+  "Venta_Ayer": 200.00,
+  "Venta_7_Dias": 232.00,
+  "Venta_30_Dias": 500.00,
+  "Promedio_7_Dias": 232.00,
+  "Promedio_30_Dias": 232.00,
+  "TienePromocion": 0,
+  "StockActual": 120
+}
+```
+
+## 5. Estructura principal
 
 - `main.py`: pipeline completo de entrenamiento y evaluación.
 - `pipeline/`: módulos reutilizables del proyecto.
+- `api/`: API FastAPI para inferencia en tiempo real.
 - `scripts/`: experimentos y pruebas con distintos modelos.

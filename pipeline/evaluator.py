@@ -16,14 +16,16 @@ from sklearn.metrics import (
 # =====================================================
 # 📊 REGRESIÓN (CORE METRICS)
 # =====================================================
-def evaluate_regression(y_true, y_pred, dataset_name="TEST"):
+def evaluate_regression(y_true, y_pred, dataset_name="TEST", apply_inverse_transform=True):
 
     # =========================
     # 🔄 inverse transform seguro
     # =========================
-    if USE_LOG_TARGET:
-        y_true = np.expm1(y_true)
-        y_pred = np.expm1(y_pred)
+    if apply_inverse_transform and USE_LOG_TARGET:
+        safe_y_true = np.clip(np.asarray(y_true, dtype=np.float64), -20.0, 20.0)
+        safe_y_pred = np.clip(np.asarray(y_pred, dtype=np.float64), -20.0, 20.0)
+        y_true = np.nan_to_num(np.expm1(safe_y_true), nan=0.0, posinf=1e9, neginf=0.0)
+        y_pred = np.nan_to_num(np.expm1(safe_y_pred), nan=0.0, posinf=1e9, neginf=0.0)
 
     # =========================
     # 🧮 métricas base
@@ -137,11 +139,13 @@ def evaluate_by_segment(df_results,
 # =====================================================
 # 📉 BIAS GLOBAL
 # =====================================================
-def evaluate_bias(y_true, y_pred):
+def evaluate_bias(y_true, y_pred, apply_inverse_transform=True):
 
-    if USE_LOG_TARGET:
-        y_true = np.expm1(y_true)
-        y_pred = np.expm1(y_pred)
+    if apply_inverse_transform and USE_LOG_TARGET:
+        safe_y_true = np.clip(np.asarray(y_true, dtype=np.float64), -20.0, 20.0)
+        safe_y_pred = np.clip(np.asarray(y_pred, dtype=np.float64), -20.0, 20.0)
+        y_true = np.nan_to_num(np.expm1(safe_y_true), nan=0.0, posinf=1e9, neginf=0.0)
+        y_pred = np.nan_to_num(np.expm1(safe_y_pred), nan=0.0, posinf=1e9, neginf=0.0)
 
     error = np.array(y_true) - np.array(y_pred)
     bias = np.mean(error)

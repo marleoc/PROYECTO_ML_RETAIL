@@ -57,7 +57,7 @@ def load_data_chunks(start_date="2024-01-01", chunksize=200_000):
     engine = get_engine()
 
     query = f"""
-    SELECT TOP(500000)
+    SELECT 
         Fecha,
         CantidadVendida,
         ProductoID,
